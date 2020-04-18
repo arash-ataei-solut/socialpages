@@ -8,6 +8,7 @@ from .validators import price_validator
 class Page(models.Model):
     owners = models.ManyToManyField(Profile, related_name='page')
     title = models.CharField(_('title'), max_length=255)
+    cover = models.ImageField(upload_to='pages', blank=True)
     about = models.TextField(_('about'), max_length=2000, blank=True)
     chasers = models.ManyToManyField(Profile, related_name='chased_pages', blank=True)
     num_chasers = models.DecimalField(max_digits=20, decimal_places=0, default=0)

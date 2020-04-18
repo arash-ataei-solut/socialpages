@@ -8,19 +8,22 @@ from rest_framework.mixins import ListModelMixin
 from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework import status
 
 from user.views import get_user_by_token
 from .models import Page
-from .serializers import PageSerializer, PageDetailSerializer
+from .serializers import PageSerializer, PageCreateSerializer, PageDetailSerializer
 from .tasks import buy
 from post.models import Post
 from post.views import PostView
-from post.serializers import PostSerializer
+from post.serializers import PostSerializer, PostCreateSerializer
 from post.renderers import MyRenderer
 
 
 class PageView(GenericViewSet, ListModelMixin):
-    renderer_classes = [MyRenderer, JSONRenderer]
+    renderer_classes = [JSONRenderer, MyRenderer]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     filter_backends = (SearchFilter,)
     search_fields = ('name',)
     queryset = Page.objects.all()
@@ -28,6 +31,8 @@ class PageView(GenericViewSet, ListModelMixin):
     serializers = {
         'list': PageSerializer,
         'retrieve': PostSerializer,
+        'create': PageCreateSerializer,
+        'create_post': PostCreateSerializer
     }
 
     def get_serializer_class(self):
@@ -68,6 +73,16 @@ class PageView(GenericViewSet, ListModelMixin):
             ('post', serializer.data),
         ]))
 
+    def create(self, request):
+        data = request.data
+        data['owners'] = request.user.pk
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'status': 'page creates'})
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     @action(methods=['get'], detail=True)
     def buy(self, request, **kwargs):
         if 'Authorization' in request.COOKIES:
@@ -75,3 +90,13 @@ class PageView(GenericViewSet, ListModelMixin):
             return HttpResponseRedirect(reverse('page-detail', kwargs={'pk': kwargs['pk']}))
         else:
             return HttpResponseRedirect(reverse('login'))
+
+    @action(methods=['post'], detail=True)
+    def create_post(self, request, **kwargs):
+        data = request.data
+        serializer = self.get_serializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'status': 'page creates'})
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

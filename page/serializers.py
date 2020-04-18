@@ -7,7 +7,7 @@ from user.serializers import ProfileSerializer
 class PageSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Page
-        fields = ['url', 'title', 'num_chasers']
+        fields = ['url', 'title', 'cover', 'num_chasers']
 
 
 class PageDetailSerializer(serializers.ModelSerializer):
@@ -15,4 +15,12 @@ class PageDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Page
-        fields = ['owners', 'title', 'about', 'chasers', 'num_chasers', 'price']
+        fields = ['owners', 'title', 'cover', 'about', 'chasers', 'num_chasers', 'price']
+
+
+class PageCreateSerializer(serializers.ModelSerializer):
+    owners = serializers.StringRelatedField
+
+    class Meta:
+        model = Page
+        fields = ['owners', 'title', 'cover', 'about', 'price']

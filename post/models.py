@@ -1,4 +1,4 @@
-# from hurry.filesize import size
+from hurry.filesize import size
 from django.db import models
 from django.core.validators import FileExtensionValidator
 
@@ -42,38 +42,14 @@ def user_directory_path(instance, filename):
     return 'sender_{0}/{1}'.format(instance.sender.username, filename)
 
 
-class MediaFile(models.Model):
-    file = models.FileField(
-        upload_to='files',
-        validators=[FileExtensionValidator(['pdf', 'jpg', 'png', 'mp3', 'mp4', 'mkv']), validate_file_size],
-        blank=True
-    )
-    price = models.DecimalField(max_digits=10, decimal_places=0, default=0, validators=[price_validator])
-    special_users = models.ManyToManyField(
-        Profile,
-        related_name='bought_medias',
-        related_query_name='bought_media',
-        blank=True
-    )
-
-    def file_size(self):
-        return self.file.size
-
-    @property
-    def is_special(self):
-        return False if self.price == 0 else True
-
-
 class Post(models.Model):
     sender = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='post')
-    store = models.ForeignKey(Page, on_delete=models.CASCADE, related_name='post')
+    page = models.ForeignKey(Page, on_delete=models.CASCADE, related_name='post')
 
     subcategories = models.ManyToManyField(Subcategory, related_name='post')
     title = models.CharField(max_length=255)
     cover = models.ImageField(upload_to=user_directory_path)
     caption = models.TextField(max_length=5000, blank=True)
-
-    medias = models.ManyToManyField(MediaFile, related_name='post', blank=True)
 
     viewed_by = models.ManyToManyField(Profile, related_name='viewed_posts', blank=True)
 
@@ -93,6 +69,29 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class MediaFile(models.Model):
+    file = models.FileField(
+        upload_to='files',
+        validators=[FileExtensionValidator(['pdf', 'jpg', 'png', 'mp3', 'mp4', 'mkv']), validate_file_size],
+        blank=True
+    )
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='medias')
+    price = models.DecimalField(max_digits=10, decimal_places=0, default=0, validators=[price_validator])
+    special_users = models.ManyToManyField(
+        Profile,
+        related_name='bought_medias',
+        related_query_name='bought_media',
+        blank=True
+    )
+
+    def file_size(self):
+        return size(self.file.size)
+
+    @property
+    def is_special(self):
+        return False if self.price == 0 else True
 
 
 class Rate(models.Model):

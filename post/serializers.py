@@ -29,12 +29,27 @@ class SubcategoryDetailSerializer(serializers.ModelSerializer):
         fields = ['name', 'id', 'category', 'chasers', 'num_chasers']
 
 
+class SubcategoryCreateSerializer(serializers.ModelSerializer):
+    category = serializers.StringRelatedField
+
+    class Meta:
+        model = Subcategory
+        fields = ['name', 'id', 'category']
+
+
 class CategoryDetailSerializer(serializers.ModelSerializer):
     chasers = ProfileSerializer(many=True)
 
     class Meta:
         model = Category
         fields = ['name', 'id', 'chasers', 'num_chasers']
+
+
+class CategoryCreateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Category
+        fields = ['name', 'id']
 
 
 class HideMediaSerializer(serializers.ModelSerializer):
@@ -48,7 +63,7 @@ class MediaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MediaFile
-        fields = ['id', 'file_size', 'file']
+        fields = ['id', 'file_size', 'file', 'price']
 
 
 class PostSerializer(serializers.HyperlinkedModelSerializer):
@@ -60,14 +75,15 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class PostDetailSerializer(serializers.ModelSerializer):
-    store = PageSerializer()
+    page = PageSerializer()
     sender = ProfileSerializer(read_only=True)
     subcategories = SubcategorySerializer(many=True)
     viewed_by = ProfileSerializer(many=True)
     views = serializers.SerializerMethodField()
+    special_users = ProfileSerializer(many=True)
 
-    def get_views(self, Post):
-        return Post.viewed_by.all().count()
+    def get_views(self, post):
+        return post.viewed_by.all().count()
 
     class Meta:
         model = Post
@@ -80,7 +96,23 @@ class PostDetailSerializer(serializers.ModelSerializer):
             'subcategories',
             'viewed_by',
             'views',
-            'is_special',
+            'price',
+            'special_users',
+        ]
+
+
+class PostCreateSerializer(serializers.ModelSerializer):
+    subcategories = serializers.StringRelatedField
+
+    def get_views(self, post):
+        return post.viewed_by.all().count()
+
+    class Meta:
+        model = Post
+        fields = [
+            'title',
+            'caption',
+            'subcategories',
             'price',
         ]
 

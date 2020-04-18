@@ -104,12 +104,6 @@
             </form>
           {% endif %}
 
-          {% if options_form %}
-            <form class="button-form" action="{{ request.get_full_path }}" data-method="OPTIONS">
-              <button class="btn btn-primary js-tooltip" title="Make an OPTIONS request on the {{ name }} resource">OPTIONS</button>
-            </form>
-          {% endif %}
-
           {% if delete_form %}
             <button class="btn btn-danger button-form js-tooltip" title="Make a DELETE request on the {{ name }} resource" data-toggle="modal" data-target="#deleteModal">DELETE</button>
 
@@ -133,15 +127,9 @@
 
           {% if extra_actions %}
             <div class="dropdown" style="float: right; margin-right: 10px">
-              <button class="btn btn-default" id="extra-actions-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                {% trans "Extra Actions" %}
-                <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="extra-actions-menu">
                 {% for action_name, url in extra_actions|items %}
-                <li><a href="{{ url }}">{{ action_name }}</a></li>
+                <a class="btn btn-primary" href="{{ url }}">{{ action_name }}</a>
                 {% endfor %}
-              </ul>
             </div>
           {% endif %}
 

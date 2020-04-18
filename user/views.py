@@ -34,6 +34,12 @@ def get_user_by_token(request):
 class Signup(APIView):
     serializer_class = se.SignupSerializer
 
+    def get(self, request):
+        if request.user.is_authenticated:
+            return Response({'you': request.user.username})
+        else:
+            return Response({'status': 'signing up'})
+
     def post(self, request):
         serializer = se.SignupSerializer(data=request.data)
         if serializer.is_valid():
@@ -44,12 +50,12 @@ class Signup(APIView):
 
 class Logout(APIView):
     def get(self, request):
-        request.user.auth_token.delete()
-        return Response(status=status.HTTP_200_OK)
+        response = Response({'status': 'cookie deleted'})
+        response.delete_cookie('Authorization', path='/')
+        return response
 
 
 class ProfileView(APIView):
-    authentication_classes = [JSONWebTokenAuthentication]
     serializer_class = se.ProfileDetailSerializer
 
     def get(self, request):
