@@ -97,6 +97,6 @@ class PageView(GenericViewSet, ListModelMixin):
         serializer = self.get_serializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            return Response({'status': 'page creates'})
+            return HttpResponseRedirect(reverse('page-add-media', kwargs={'pk': kwargs['pk']}))
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

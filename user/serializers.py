@@ -33,11 +33,11 @@ class ProfileDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ('username', 'picture', 'first_name', 'last_name', 'email', 'phone', 'birth_date')
+        fields = ('id', 'username', 'picture', 'first_name', 'last_name', 'email', 'phone', 'birth_date')
 
 
 class ProfileSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ('url', 'username', 'picture', 'full_name')
+        fields = ('url', 'id', 'username', 'picture', 'full_name')

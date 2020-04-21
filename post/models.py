@@ -1,6 +1,7 @@
 from hurry.filesize import size
 from django.db import models
 from django.core.validators import FileExtensionValidator
+from django.utils.translation import gettext_lazy as _
 
 from page.models import Page
 from user.models import Profile
@@ -95,7 +96,7 @@ class MediaFile(models.Model):
 
 
 class Rate(models.Model):
-    rate = models.DecimalField(max_digits=2, decimal_places=2, default=0.99)
+    rate = models.DecimalField(max_digits=2, decimal_places=2, default=0.99, help_text=_('A number between 0 and 1'))
     user = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='rates')
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='rates')
 

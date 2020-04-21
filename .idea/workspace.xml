@@ -2,22 +2,22 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cb0fdcf8-c36d-491f-90e1-bc5d570dc237" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/post/permissions.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post/templates/post.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/css/all.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/css/bootstrap.min.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/css/bootstrap.min.css.map" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/js/jquery.min.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Pipfile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Pipfile.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/page/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/page/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/page/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/page/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/page/serializers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/page/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/page/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post/migrations/0001_initial.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/post/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/post/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/post/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post/renderers.py" beforeDir="false" afterPath="$PROJECT_DIR$/post/renderers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/post/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/post/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post/templatetags/mytemplatetags.py" beforeDir="false" afterPath="$PROJECT_DIR$/post/templatetags/mytemplatetags.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/post/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/post/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/post/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/socialpages/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/socialpages/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/socialpages/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/socialpages/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/user/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/user/serializers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user/validators.py" beforeDir="false" afterPath="$PROJECT_DIR$/user/validators.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/user/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,6 +28,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Python Script" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -41,11 +42,17 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/static/css" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/static/css" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/static/js" />
+      <recent name="$PROJECT_DIR$/static" />
       <recent name="$PROJECT_DIR$/post" />
     </key>
   </component>

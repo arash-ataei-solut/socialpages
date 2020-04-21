@@ -25,12 +25,12 @@ from user.views import Signup, Logout
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include_docs_urls(title='Polls API')),
+    path('API', include_docs_urls(title='Polls API')),
     path('login/', obtain_jwt_token, name='login'),
     path('logout/', Logout.as_view(), name='logout'),
     path('api-token-refresh/', refresh_jwt_token, name='refresh_token'),
     path('signup/', Signup.as_view(), name='signup'),
     path('', include('page.urls')),
     path('', include('post.urls')),
-    path('', include('user.urls'))
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('', include('user.urls')),
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

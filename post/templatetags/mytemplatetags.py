@@ -433,3 +433,12 @@ def post(text):
     </div>
   </div>""".format(url, cover, p['title'])
     return mark_safe(html_code)
+
+
+@register.filter
+def is_sender(request, content):
+    content = json.loads(force_str(content))
+    if 'post info' in content:
+        return request.user.id == content['post info']['sender']['id']
+    else:
+        return False

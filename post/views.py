@@ -1,8 +1,10 @@
+from datetime import datetime, timedelta
 from django.db.models import Avg, F
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from rest_framework.viewsets import GenericViewSet
+from rest_framework.generics import ListAPIView
 from rest_framework.mixins import ListModelMixin, UpdateModelMixin, CreateModelMixin
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
@@ -214,9 +216,11 @@ class PostView(GenericViewSet, ListModelMixin, UpdateModelMixin):
                 'rate': instance.average_rate
             })
 
-    @action(methods=['post'], detail=True)
+    @action(methods=['get', 'post'], detail=True)
     def rate(self, request, **kwargs):
-        if request.user.is_authenticated:
+        if request.method == 'GET' and request.user.is_authenticated:
+            return Response({'status': 'rate'})
+        if request.method == 'POST' and request.user.is_authenticated:
             rate(request.user, kwargs['pk'], request.data['rate'])
             return HttpResponseRedirect(reverse('post-detail', kwargs={'pk': kwargs['pk']}))
         else:
@@ -230,16 +234,20 @@ class PostView(GenericViewSet, ListModelMixin, UpdateModelMixin):
         else:
             return HttpResponseRedirect(reverse('login'))
 
-    @action(methods=['put'], detail=True)
+    @action(methods=['get', 'put'], detail=True)
     def add_media(self, request, **kwargs):
-        data = request.data
-        serializer = self.get_serializer(data=data)
-        if serializer.is_valid():
-            post = Post.objects.get(pk=kwargs['pk'])
-            MediaFile.objects.create(file=data['file'], post=post, price=data['price'])
-            return Response({'status': 'media added'})
+        post = Post.objects.filter(pk=kwargs['pk']).prefetch_related('sender')[0]
+        if request.method == 'GET' and request.user == post.sender:
+            return Response({'status': 'add media'})
+        if request.method == 'PUT' and request.user == post.sender:
+            data = request.data
+            serializer = self.get_serializer(data=data)
+            if serializer.is_valid():
+                post = Post.objects.get(pk=kwargs['pk'])
+                MediaFile.objects.create(file=data['file'], post=post, price=data['price'])
+                return Response({'status': 'media added'})
         else:
-            return HttpResponseRedirect(reverse('post-detail', kwargs={'pk': kwargs['pk']}))
+            return Response({'status': 'you can not add media to this post'})
 
 
 def media_buy(request, post_id, media_id):
@@ -248,3 +256,19 @@ def media_buy(request, post_id, media_id):
         return HttpResponseRedirect(reverse('post-detail', kwargs={'pk': post_id}))
     else:
         return HttpResponseRedirect(reverse('login'))
+
+
+class Search(ListAPIView):
+    renderer_classes = [JSONRenderer, MyRenderer]
+    queryset = Post.objects.all()
+    serializer_class = se.PostSerializer
+    filter_backends = [SearchFilter]
+    search_fields = ['title']
+
+
+class LastDay(ListAPIView):
+    renderer_classes = [JSONRenderer, MyRenderer]
+    queryset = Post.objects.filter(create_date__gt=datetime.now()-timedelta(hours=24))
+    serializer_class = se.PostSerializer
+    filter_backends = [SearchFilter]
+    search_fields = ['title']
