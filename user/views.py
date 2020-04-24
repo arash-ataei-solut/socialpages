@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -5,6 +7,8 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework_jwt.utils import jwt_response_payload_handler
+from rest_framework_jwt.views import ObtainJSONWebToken
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
 import jwt
@@ -48,9 +52,30 @@ class Signup(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class Login(ObtainJSONWebToken):
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            token = serializer.object.get('token')
+            response = HttpResponseRedirect(request.data['the url'])
+            if api_settings.JWT_AUTH_COOKIE:
+                expiration = (datetime.utcnow() +
+                              api_settings.JWT_EXPIRATION_DELTA)
+                response.set_cookie(api_settings.JWT_AUTH_COOKIE,
+                                    token,
+                                    expires=expiration,
+                                    httponly=True)
+            return response
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class Logout(APIView):
-    def get(self, request):
-        response = Response({'status': 'cookie deleted'})
+
+    def post(self, request):
+        response = HttpResponseRedirect(request.data['the url'])
         response.delete_cookie('Authorization', path='/')
         return response
 

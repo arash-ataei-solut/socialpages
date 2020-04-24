@@ -13,5 +13,5 @@ router.register('post', PostView)
 urlpatterns = [
     path('media-buy/<int:post_id>/<int:media_id>', media_buy),
     path('search/', Search.as_view(), name='search'),
-    path('last-day', LastDay.as_view(), name='last-day')
+    path('24h/', LastDay.as_view(), name='24h')
 ] + router.urls

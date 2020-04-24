@@ -267,6 +267,7 @@ class Search(ListAPIView):
 
 
 class LastDay(ListAPIView):
+    name = '24h'
     renderer_classes = [JSONRenderer, MyRenderer]
     queryset = Post.objects.filter(create_date__gt=datetime.now()-timedelta(hours=24))
     serializer_class = se.PostSerializer

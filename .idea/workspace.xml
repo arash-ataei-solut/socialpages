@@ -2,22 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cb0fdcf8-c36d-491f-90e1-bc5d570dc237" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/post/templates/post.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/css/all.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/css/bootstrap.min.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/css/bootstrap.min.css.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/js/jquery.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/page/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/page/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/post/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post/renderers.py" beforeDir="false" afterPath="$PROJECT_DIR$/post/renderers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/post/templates/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post/templatetags/mytemplatetags.py" beforeDir="false" afterPath="$PROJECT_DIR$/post/templatetags/mytemplatetags.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post/templates/post.html" beforeDir="false" afterPath="$PROJECT_DIR$/post/templates/post.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/post/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/post/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/post/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/post/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/socialpages/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/socialpages/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/socialpages/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/socialpages/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/user/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/user/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/user/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,6 +36,7 @@
   <component name="PropertiesComponent">
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/static/css" />
   </component>
   <component name="RecentsManager">
@@ -70,6 +63,10 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
+    <state x="722" y="52" width="465" height="984" key="#HTML" timestamp="1587487738231">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="722" y="52" width="465" height="984" key="#HTML/0.0.1920.1080@0.0.1920.1080" timestamp="1587487738231" />
     <state x="743" y="298" width="424" height="493" key="FileChooserDialogImpl" timestamp="1586336973790">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
