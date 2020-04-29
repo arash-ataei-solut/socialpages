@@ -81,6 +81,18 @@ class PostDetailSerializer(serializers.ModelSerializer):
     viewed_by = ProfileSerializer(many=True)
     views = serializers.SerializerMethodField()
     special_users = ProfileSerializer(many=True)
+    files = serializers.SerializerMethodField()
+    hide_files = serializers.SerializerMethodField()
+    rate = serializers.SerializerMethodField()
+
+    def get_files(self, obj):
+        return self.context['more details']['files']
+
+    def get_hide_files(self, obj):
+        return self.context['more details']['hide files']
+
+    def get_rate(self, obj):
+        return self.context['more details']['rate']
 
     def get_views(self, post):
         return post.viewed_by.all().count()
@@ -98,6 +110,9 @@ class PostDetailSerializer(serializers.ModelSerializer):
             'views',
             'price',
             'special_users',
+            'files',
+            'hide_files',
+            'rate',
         ]
 
 

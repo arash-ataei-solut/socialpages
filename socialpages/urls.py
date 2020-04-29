@@ -25,7 +25,7 @@ from user.views import Signup, Logout, Login
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('API', include_docs_urls(title='Polls API')),
+    path('API/', include_docs_urls(title='Polls API'), name='api'),
     path('api-token/', obtain_jwt_token, name='api-token'),
     path('api-token-refresh/', refresh_jwt_token, name='refresh_token'),
     path('logout/', Logout.as_view(), name='logout'),

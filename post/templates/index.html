@@ -1,6 +1,6 @@
 {% load static %}
 {% load i18n %}
-{% load mytemplatetags %}
+{% load rest_framework %}
 
 <!DOCTYPE html>
 <html>
@@ -16,12 +16,12 @@
 
       {% block style %}
         {% block bootstrap_theme %}
-          <link rel="stylesheet" type="text/css" href="{% static 'rest_framework/css/bootstrap.min.css' %}"/>
-          <link rel="stylesheet" type="text/css" href="{% static 'rest_framework/css/bootstrap-tweaks.css' %}"/>
+          <link rel="stylesheet" type="text/css" href="{% static "rest_framework/css/bootstrap.min.css" %}"/>
+          <link rel="stylesheet" type="text/css" href="{% static "rest_framework/css/bootstrap-tweaks.css" %}"/>
         {% endblock %}
 
-        <link rel="stylesheet" type="text/css" href="{% static 'rest_framework/css/prettify.css' %}"/>
-        <link rel="stylesheet" type="text/css" href="{% static 'rest_framework/css/default.css' %}"/>
+        <link rel="stylesheet" type="text/css" href="{% static "rest_framework/css/prettify.css" %}"/>
+        <link rel="stylesheet" type="text/css" href="{% static "rest_framework/css/default.css" %}"/>
         {% if code_style %}<style>{{ code_style }}</style>{% endif %}
       {% endblock %}
 
@@ -29,13 +29,12 @@
   </head>
 
   {% block body %}
-  <body class="-page">
+  <body class="{% block bodyclass %}{% endblock %}">
 
-
-
+    <div class="wrapper">
       {% block navbar %}
         <div class="navbar navbar-static-top {% block bootstrap_navbar_variant %}navbar-inverse{% endblock %}"
-             role="navigation" aria-label="{% trans 'navbar' %}">
+             role="navigation" aria-label="{% trans "navbar" %}">
           <div class="container">
             <span>
               {% block branding %}
@@ -73,12 +72,42 @@
         {% endblock %}
 
         <!-- Content -->
-        <div id="content" role="main" aria-label="{% trans 'content' %}">
+        <div id="content" role="main" aria-label="{% trans "content" %}">
           {% block content %}
 
-          <div class="region"  aria-label="{% trans 'request form' %}">
+          <div class="region"  aria-label="{% trans "request form" %}">
           {% block request_forms %}
 
+          {% if 'GET' in allowed_methods %}
+            <form id="get-form" class="pull-right">
+              <fieldset>
+                {% if api_settings.URL_FORMAT_OVERRIDE %}
+                  <div class="btn-group format-selection">
+                    <a class="btn btn-primary js-tooltip" href="{{ request.get_full_path }}" rel="nofollow" title="Make a GET request on the {{ name }} resource">GET</a>
+
+                    <button class="btn btn-primary dropdown-toggle js-tooltip" data-toggle="dropdown" title="Specify a format for the GET request">
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                      {% for format in available_formats %}
+                        <li>
+                          <a class="js-tooltip format-option" href="{% add_query_param request api_settings.URL_FORMAT_OVERRIDE format %}" rel="nofollow" title="Make a GET request on the {{ name }} resource with the format set to `{{ format }}`">{{ format }}</a>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                {% else %}
+                  <a class="btn btn-primary js-tooltip" href="{{ request.get_full_path }}" rel="nofollow" title="Make a GET request on the {{ name }} resource">GET</a>
+                {% endif %}
+              </fieldset>
+            </form>
+          {% endif %}
+
+          {% if options_form %}
+            <form class="button-form" action="{{ request.get_full_path }}" data-method="OPTIONS">
+              <button class="btn btn-primary js-tooltip" title="Make an OPTIONS request on the {{ name }} resource">OPTIONS</button>
+            </form>
+          {% endif %}
 
           {% if delete_form %}
             <button class="btn btn-danger button-form js-tooltip" title="Make a DELETE request on the {{ name }} resource" data-toggle="modal" data-target="#deleteModal">DELETE</button>
@@ -103,33 +132,29 @@
 
           {% if extra_actions %}
             <div class="dropdown" style="float: right; margin-right: 10px">
+              <button class="btn btn-default" id="extra-actions-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                {% trans "Extra Actions" %}
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="extra-actions-menu">
                 {% for action_name, url in extra_actions|items %}
-                {% if action_name == 'Rate' or action_name == 'Buy' %}
-                  {% if request.user.is_authenticated %}
-                    <a class="btn btn-primary" href="{{ url }}">{{ action_name }}</a>
-                  {% endif %}
-                {% elif action_name == 'Add media' %}
-                  {% if request|is_sender:content %}
-                    <a class="btn btn-primary" href="{{ url }}">{{ action_name }}</a>
-                  {% endif %}
-                {% else %}
-                  <a class="btn btn-primary" href="{{ url }}">{{ action_name }}</a>
-                {% endif %}
+                <li><a href="{{ url }}">{{ action_name }}</a></li>
                 {% endfor %}
+              </ul>
             </div>
           {% endif %}
 
           {% if filter_form %}
             <button style="float: right; margin-right: 10px" data-toggle="modal" data-target="#filtersModal" class="btn btn-default">
-              <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-              search
+              <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+              {% trans "Filters" %}
             </button>
           {% endif %}
 
           {% endblock request_forms %}
           </div>
 
-            <div class="content-main" role="main"  aria-label="{% trans 'main content' %}">
+            <div class="content-main" role="main"  aria-label="{% trans "main content" %}">
               <div class="page-header">
                 <h1>{{ name }}</h1>
               </div>
@@ -145,16 +170,15 @@
                 </nav>
               {% endif %}
 
-              <div class="request-info" style="clear: both" aria-label="{% trans 'request info' %}">
+              <div class="request-info" style="clear: both" aria-label="{% trans "request info" %}">
                 <pre class="prettyprint"><b>{{ request.method }}</b> {{ request.get_full_path }}</pre>
               </div>
 
-              <div class="response-info" aria-label="{% trans 'response info' %}">
+              <div class="response-info" aria-label="{% trans "response info" %}">
                 <pre class="prettyprint"><span class="meta nocode"><b>HTTP {{ response.status_code }} {{ response.status_text }}</b>{% for key, val in response_headers|items %}
 <b>{{ key }}:</b> <span class="lit">{{ val|break_long_headers|urlize_quoted_links }}</span>{% endfor %}
 
 </span>{{ content|urlize_quoted_links }}</pre>
-
               </div>
             </div>
 
@@ -256,6 +280,7 @@
           {% endblock content %}
         </div><!-- /.content -->
       </div><!-- /.container -->
+    </div><!-- ./wrapper -->
 
     {% if filter_form %}
       {{ filter_form }}
@@ -268,12 +293,12 @@
           csrfToken: "{% if request %}{{ csrf_token }}{% endif %}"
         };
       </script>
-      <script src="{% static 'rest_framework/js/jquery-3.4.1.min.js' %}"></script>
-      <script src="{% static 'rest_framework/js/ajax-form.js' %}"></script>
-      <script src="{% static 'rest_framework/js/csrf.js' %}"></script>
-      <script src="{% static 'rest_framework/js/bootstrap.min.js' %}"></script>
-      <script src="{% static 'rest_framework/js/prettify-min.js' %}"></script>
-      <script src="{% static 'rest_framework/js/default.js' %}"></script>
+      <script src="{% static "rest_framework/js/jquery-3.4.1.min.js" %}"></script>
+      <script src="{% static "rest_framework/js/ajax-form.js" %}"></script>
+      <script src="{% static "rest_framework/js/csrf.js" %}"></script>
+      <script src="{% static "rest_framework/js/bootstrap.min.js" %}"></script>
+      <script src="{% static "rest_framework/js/prettify-min.js" %}"></script>
+      <script src="{% static "rest_framework/js/default.js" %}"></script>
       <script>
         $(document).ready(function() {
           $('form').ajaxForm();

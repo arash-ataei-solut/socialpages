@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_jwt.utils import jwt_response_payload_handler
 from rest_framework_jwt.views import ObtainJSONWebToken
+from django.utils.translation import gettext_lazy as _
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
 import jwt
@@ -56,10 +57,11 @@ class Login(ObtainJSONWebToken):
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
+        request.last_url = request.data['last_url'] or reverse('')
 
         if serializer.is_valid():
             token = serializer.object.get('token')
-            response = HttpResponseRedirect(request.data['the url'])
+            response = HttpResponseRedirect(request.last_url)
             if api_settings.JWT_AUTH_COOKIE:
                 expiration = (datetime.utcnow() +
                               api_settings.JWT_EXPIRATION_DELTA)
@@ -75,7 +77,7 @@ class Login(ObtainJSONWebToken):
 class Logout(APIView):
 
     def post(self, request):
-        response = HttpResponseRedirect(request.data['the url'])
+        response = HttpResponseRedirect(request.data['last_url'])
         response.delete_cookie('Authorization', path='/')
         return response
 

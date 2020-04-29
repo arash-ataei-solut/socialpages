@@ -5,10 +5,10 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.generics import ListAPIView
-from rest_framework.mixins import ListModelMixin, UpdateModelMixin, CreateModelMixin
+from rest_framework.mixins import ListModelMixin, UpdateModelMixin, CreateModelMixin, DestroyModelMixin
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
-from rest_framework.renderers import JSONRenderer
+from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from collections import OrderedDict
@@ -27,7 +27,7 @@ class CategoryView(GenericViewSet, ListModelMixin, CreateModelMixin):
     permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = Category.objects.all()
     filter_backends = (SearchFilter,)
-    search_fields = ('name',)
+    search_fields = ('name', 'subcategories__name')
 
     serializers = {
         'list': se.CategorySerializer,
@@ -74,7 +74,7 @@ class CategoryView(GenericViewSet, ListModelMixin, CreateModelMixin):
         ]))
 
 
-class SubcategoryView(GenericViewSet, ListModelMixin, CreateModelMixin):
+class SubcategoryView(GenericViewSet, CreateModelMixin):
     renderer_classes = [JSONRenderer, MyRenderer]
     permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = Subcategory.objects.all()
@@ -82,7 +82,6 @@ class SubcategoryView(GenericViewSet, ListModelMixin, CreateModelMixin):
     search_fields = ('name',)
 
     serializers = {
-        'list': se.SubcategorySerializer,
         'retrieve': se.PostSerializer,
         'create': se.SubcategoryCreateSerializer
     }
@@ -126,7 +125,7 @@ class SubcategoryView(GenericViewSet, ListModelMixin, CreateModelMixin):
         ]))
 
 
-class PostView(GenericViewSet, ListModelMixin, UpdateModelMixin):
+class PostView(ListModelMixin, UpdateModelMixin, DestroyModelMixin, GenericViewSet):
     renderer_classes = [JSONRenderer, MyRenderer]
     permission_classes = [IsSenderOrIsAuthenticatedOrReadOnly]
     queryset = qs = Post.objects.all().annotate(
@@ -135,7 +134,14 @@ class PostView(GenericViewSet, ListModelMixin, UpdateModelMixin):
         F('average_rate').desc(nulls_first=True), '-create_date'
     )
     filter_backends = (SearchFilter,)
-    search_fields = ('title',)
+    search_fields = (
+        'title',
+        'subcategories__name',
+        'subcategories__category__name',
+        'caption',
+        'page__title',
+        'sender__username',
+    )
 
     serializers = {
         'list': se.PostSerializer,
@@ -155,7 +161,7 @@ class PostView(GenericViewSet, ListModelMixin, UpdateModelMixin):
             instance = Post.objects.filter(pk=kwargs['pk']).annotate(
                 average_rate=Avg('rates__rate')
             ).prefetch_related(
-                'viewed_by', 'medias__special_users', 'special_users', 'page__special_users'
+                'sender', 'viewed_by', 'medias__special_users', 'special_users', 'page__special_users'
             )[0]
         except ObjectDoesNotExist:
             return Response({'error': 'the post by id = {} does not exist'.format(kwargs['pk'])})
@@ -164,18 +170,13 @@ class PostView(GenericViewSet, ListModelMixin, UpdateModelMixin):
             user = Profile.objects.get(username=get_user_by_token(request))
             if user not in instance.viewed_by.all():
                 instance.viewed_by.add(user)
-            if instance.price != 0 or False in [media.price != 0 for media in instance.medias.all()]:
+            if instance.price != 0 or False in [media.price != 0 for media in instance.medias.all()] or instance.sender == request.user:
                 if user in instance.special_users.all() or user in instance.page.special_users.all():
-                    post = se.PostDetailSerializer(instance, context={'request': request})
                     files = se.MediaSerializer(instance.medias, many=True, context={'request': request})
-                    return Response({
-                        'post info': post.data,
-                        'files': files.data,
-                        'hide_files': [],
-                        'rate': instance.average_rate
-                    })
+                    more_details = {'files': files.data, 'hide files': [], 'rate': instance.average_rate}
+                    post = se.PostDetailSerializer(instance, context={'request': request, 'more details': more_details})
+                    return Response(post.data)
                 else:
-                    post = se.PostDetailSerializer(instance, context={'request': request})
                     files = []
                     hide_files = []
                     medias = instance.medias.all()
@@ -184,23 +185,15 @@ class PostView(GenericViewSet, ListModelMixin, UpdateModelMixin):
                             files.append(se.MediaSerializer(media, context={'request': request}).data)
                         else:
                             hide_files.append(se.HideMediaSerializer(media, context={'request': request}).data)
-                    return Response({
-                        'post info': post.data,
-                        'files': files,
-                        'hide_files': hide_files,
-                        'rate': instance.average_rate
-                    })
+                    more_details = {'files': files, 'hide files': hide_files, 'rate': instance.average_rate}
+                    post = se.PostDetailSerializer(instance, context={'request': request, 'more details': more_details})
+                    return Response(post.data)
             else:
-                post = se.PostDetailSerializer(instance, context={'request': request})
                 files = se.MediaSerializer(instance.medias, many=True, context={'request': request})
-                return Response({
-                    'post info': post.data,
-                    'files': files.data,
-                    'hide_files': [],
-                    'rate': instance.average_rate
-                })
+                more_details = {'files': files.data, 'hide files': [], 'rate': instance.average_rate}
+                post = se.PostDetailSerializer(instance, context={'request': request, 'more details': more_details})
+                return Response(post.data)
         else:
-            post = se.PostDetailSerializer(instance, context={'request': request})
             files = []
             hide_files = []
             medias = instance.medias.all()
@@ -209,22 +202,9 @@ class PostView(GenericViewSet, ListModelMixin, UpdateModelMixin):
                     files.append(se.MediaSerializer(media, context={'request': request}).data)
                 else:
                     hide_files.append(se.HideMediaSerializer(media, context={'request': request}).data)
-            return Response({
-                'post info': post.data,
-                'files': files,
-                'hide_files': hide_files,
-                'rate': instance.average_rate
-            })
-
-    @action(methods=['get', 'post'], detail=True)
-    def rate(self, request, **kwargs):
-        if request.method == 'GET' and request.user.is_authenticated:
-            return Response({'status': 'rate'})
-        if request.method == 'POST' and request.user.is_authenticated:
-            rate(request.user, kwargs['pk'], request.data['rate'])
-            return HttpResponseRedirect(reverse('post-detail', kwargs={'pk': kwargs['pk']}))
-        else:
-            return HttpResponseRedirect(reverse('login'))
+            more_details = {'files': files, 'hide files': hide_files, 'rate': instance.average_rate}
+            post = se.PostDetailSerializer(instance, context={'request': request, 'more details': more_details})
+            return Response(post.data)
 
     @action(methods=['get'], detail=True)
     def buy(self, request, **kwargs):
@@ -258,18 +238,26 @@ def media_buy(request, post_id, media_id):
         return HttpResponseRedirect(reverse('login'))
 
 
-class Search(ListAPIView):
-    renderer_classes = [JSONRenderer, MyRenderer]
-    queryset = Post.objects.all()
-    serializer_class = se.PostSerializer
-    filter_backends = [SearchFilter]
-    search_fields = ['title']
+def Rate(request, **kwargs):
+    if request.method == 'GET' and request.user.is_authenticated:
+        return Response({'status': 'rate'})
+    if request.method == 'POST' and request.user.is_authenticated:
+        rate(request.user, kwargs['pk'], request.data['rate'])
+        return HttpResponseRedirect(reverse('post-detail', kwargs={'pk': kwargs['pk']}))
+    else:
+        return HttpResponseRedirect(reverse('login'))
 
 
 class LastDay(ListAPIView):
     name = '24h'
     renderer_classes = [JSONRenderer, MyRenderer]
-    queryset = Post.objects.filter(create_date__gt=datetime.now()-timedelta(hours=24))
+    queryset = Post.objects.filter(
+        create_date__gt=datetime.now() - timedelta(hours=24)
+    ).annotate(
+        average_rate=Avg('rates__rate')
+    ).order_by(
+        F('average_rate').desc(nulls_first=True), '-create_date'
+    )
     serializer_class = se.PostSerializer
     filter_backends = [SearchFilter]
     search_fields = ['title']

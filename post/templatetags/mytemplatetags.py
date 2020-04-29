@@ -403,42 +403,42 @@ def break_long_headers(header):
     return header
 
 
+
 @register.filter
-def post(text):
-    words = json.loads(force_str(text))
-    if 'image' in words:
-        words = [words]
+def post_list(content):
+    words = json.loads(force_str(content))
+    posts = words['results']
     html_code = ''
-    for p in words:
-        print(words)
-        url = "#"
-        cover = ""
-        if 'cover' in p:
-            cover = p['cover']
-        if 'image' in p:
-            cover = p['image']
-        if 'url' in p:
-            url = p['url']
-        print('########', url, cover)
+    for p in posts:
+        cover = p['cover']
+        url = p['url']
+        title = p['title']
         html_code += """
- <div class="row">
-  <div class="col-md-4">
-    <div class="thumbnail">
+  <div class="col-md-4 mb-3">
+    <div class="img-thumbnail p-2 text-center">
       <a href="{0}">
-        <img src="{1}" alt="Lights" style="width:100%">
+        <div class="img-thumbnail d-flex align-items-center justify-content-center" style="width: 100%; height: 302px;">
+          <img class="rounded" src="{1}" alt="Lights" style="max-width:100%; max-height: 300px;">
+        </div>
         <div class="caption">
-          <p class="text-center">{2}</p>
+          <p class="text-center mb-0 mt-2" style="max-width:100%; word-wrap: break-word;">{2}</p>
         </div>
       </a>
     </div>
-  </div>""".format(url, cover, p['title'])
+  </div>""".format(url, cover, title)
     return mark_safe(html_code)
+
+
+@register.filter
+def render_content(request, content):
+    if request.path in ['/post', '/post/', '/24h', '/24h/']:
+        return post_list(content)
+    else:
+        return urlize_quoted_links(content)
 
 
 @register.filter
 def is_sender(request, content):
     content = json.loads(force_str(content))
-    if 'post info' in content:
-        return request.user.id == content['post info']['sender']['id']
-    else:
-        return False
+    # return request.user.username == content['sender']['username']
+    return False

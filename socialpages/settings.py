@@ -26,7 +26,7 @@ SECRET_KEY = 'h$m-d_^6j_rpa(q-m5u^vzp_v-br4&s3dlbxutfb^4*d&pd$5*'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.1.51', '127.0.0.1']
 
 
 # Application definition
@@ -81,7 +81,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     ),
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'DEFAULT_PAGINATION_CLASS': 'post.pagination.MyPagination',
     'PAGE_SIZE': 5,
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
 }
