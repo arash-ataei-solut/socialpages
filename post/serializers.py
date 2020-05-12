@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Post, Subcategory, Category, MediaFile, Rate
+from .models import Post, Subcategory, Category, MediaFile, Rate, Comment
 from page.serializers import PageSerializer
 from user.serializers import ProfileSerializer
 
@@ -74,6 +74,14 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['url', 'id', 'sender', 'title', 'cover']
 
 
+class CommentSerializer(serializers.ModelSerializer):
+    user = ProfileSerializer()
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'text', 'user']
+
+
 class PostDetailSerializer(serializers.ModelSerializer):
     page = PageSerializer()
     sender = ProfileSerializer(read_only=True)
@@ -84,6 +92,7 @@ class PostDetailSerializer(serializers.ModelSerializer):
     files = serializers.SerializerMethodField()
     hide_files = serializers.SerializerMethodField()
     rate = serializers.SerializerMethodField()
+    comments = CommentSerializer()
 
     def get_files(self, obj):
         return self.context['more details']['files']
@@ -113,6 +122,7 @@ class PostDetailSerializer(serializers.ModelSerializer):
             'files',
             'hide_files',
             'rate',
+            'comments',
         ]
 
 

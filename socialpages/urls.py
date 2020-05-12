@@ -20,7 +20,7 @@ from django.conf.urls.static import static
 from rest_framework.documentation import include_docs_urls
 from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
 
-from user.views import Signup, Logout, Login
+from user.views import Signup, LogoutView, LoginView
 
 
 urlpatterns = [
@@ -28,8 +28,8 @@ urlpatterns = [
     path('API/', include_docs_urls(title='Polls API'), name='api'),
     path('api-token/', obtain_jwt_token, name='api-token'),
     path('api-token-refresh/', refresh_jwt_token, name='refresh_token'),
-    path('logout/', Logout.as_view(), name='logout'),
-    path('login/', Login.as_view(), name='login'),
+    path('logout/', LogoutView.as_view(), name='logout'),
+    path('login/', LoginView.as_view(), name='login'),
     path('signup/', Signup.as_view(), name='signup'),
     path('', include('page.urls')),
     path('', include('post.urls')),

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+{% load mytemplatetags %}
+
+{% block content %}
+  <div class="container" >
+
+    {% if display_edit_forms %}
+      {% if post_form or raw_data_post_form %}
+
+        <div class="p-4 shadow rounded-lg mt-4 mb-4" style="background:#fff;">
+          {% if post_form %}
+
+            <div id="post-object-form">
+              <h1>Signup</h1>
+              <br>
+              {% with form=post_form %}
+                <form action="{{ request.get_full_path }}" method="POST" enctype="multipart/form-data" class="form-horizontal" novalidate>
+                    {% csrf_token %}
+                    {{ post_form }}
+                    {{ post_form.errors}}
+                    <br>
+                    <div class="form-actions">
+                      <button class="btn btn-primary js-tooltip" title="Make a POST request on the {{ name }} resource">Signup</button>
+                    </div>
+                </form>
+              {% endwith %}
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+    {% endif %}
+  </div><!-- /.container -->
+
+  <script>
+  $(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+  });
+  </script>
+{% endblock content %}
+
+
+

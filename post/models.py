@@ -1,3 +1,4 @@
+from django.utils import timezone
 from hurry.filesize import size
 from django.db import models
 from django.core.validators import FileExtensionValidator
@@ -48,14 +49,13 @@ class Post(models.Model):
     page = models.ForeignKey(Page, on_delete=models.CASCADE, related_name='post')
 
     subcategories = models.ManyToManyField(Subcategory, related_name='post')
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=150)
     cover = models.ImageField(upload_to=user_directory_path)
     caption = models.TextField(max_length=5000, blank=True)
 
-    viewed_by = models.ManyToManyField(Profile, related_name='viewed_posts', blank=True)
+    date_created = models.DateTimeField(_('date created'), default=timezone.now)
 
-    create_date = models.DateTimeField(auto_now_add=True)
-    edit_date = models.DateTimeField(auto_now=True)
+    viewed_by = models.ManyToManyField(Profile, related_name='viewed_posts', blank=True)
 
     price = models.DecimalField(max_digits=10, decimal_places=0, default=0, validators=[price_validator])
     special_users = models.ManyToManyField(
@@ -66,7 +66,7 @@ class Post(models.Model):
     )
 
     class Meta:
-        ordering = ('-create_date',)
+        ordering = ('-date_created',)
 
     def __str__(self):
         return self.title
@@ -102,3 +102,9 @@ class Rate(models.Model):
 
     class Meta:
         unique_together = ('user', 'post')
+
+
+class Comment(models.Model):
+    text = models.TextField(max_length=5000)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='comments')

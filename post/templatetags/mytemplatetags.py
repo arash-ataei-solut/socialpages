@@ -403,7 +403,6 @@ def break_long_headers(header):
     return header
 
 
-
 @register.filter
 def post_list(content):
     words = json.loads(force_str(content))
@@ -429,6 +428,22 @@ def post_list(content):
     return mark_safe(html_code)
 
 
+"""
+<div class="container">
+  <form action="/action_page.php">
+    <div class="row">
+      <span style="color:#007bff;font-weight:bold" class="col-1 text-right mb-2 mt-1 ml-4">0</span>
+      <input type="range" class="custom-range col-7 mb-2 mt-1" id="customRange" name="points1">
+      <span style="color:#007bff;font-weight:bold" class="col-1 text-left mb-2 mt-1">100</span>
+      <div class=" col-sm-2">
+        <button type="submit" class="btn btn-primary col-12 mb-2">rate</button>
+      </div>
+    </div>
+  </form>
+</div>
+"""
+
+
 @register.filter
 def render_content(request, content):
     if request.path in ['/post', '/post/', '/24h', '/24h/']:
@@ -442,3 +457,18 @@ def is_sender(request, content):
     content = json.loads(force_str(content))
     # return request.user.username == content['sender']['username']
     return False
+
+
+@register.filter
+def login_error(content):
+    content = json.loads(force_str(content))
+    if 'non_field_errors' in content:
+        text = """
+<div class="alert alert-danger alert-dismissible fade show">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  {}
+</div>
+        """.format(content['non_field_errors'][0])
+        return mark_safe(text)
+
+    return mark_safe('')

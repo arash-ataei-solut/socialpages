@@ -1,46 +1,99 @@
-from abc import ABC
-
+from django.contrib.auth.password_validation import validate_password, MinimumLengthValidator
+from django.core import exceptions
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework_jwt.serializers import JSONWebTokenSerializer
 
 from .models import Profile
+from .validators import UppercasePasswordValidator, HasDigitPasswordValidator
 
 
 class SignupSerializer(serializers.ModelSerializer):
-    password1 = serializers.CharField(label='password')
-    password2 = serializers.CharField(label='password confirm')
+    password1 = serializers.CharField(
+        label='password',
+        style={'input_type': 'password'},
+        validators=[validate_password, UppercasePasswordValidator(), HasDigitPasswordValidator()]
+    )
+    password2 = serializers.CharField(label='password confirm', style={'input_type': 'password'})
 
-    def get_clean_password(self):
-        password1 = self.data.get("password1")
-        password2 = self.data.get("password2")
-        print(password1, password2)
-        if not password1 or not password2 or password1 != password2:
-            raise serializers.ValidationError(_('passwords must match'))
-        return password2
-
-    def create(self, validated_data):
-        clean_password = self.get_clean_password()
-        if clean_password:
-            user, _ = Profile.objects.get_or_create(username=validated_data['username'])
-            user.set_password(clean_password)
-            user.save()
-            return user
+    def validate_password2(self, value):
+        password1 = self.initial_data.get("password1")
+        password2 = self.initial_data.get("password2")
+        if password1 != password2:
+            raise serializers.ValidationError('passwords must match')
+        return value
 
     class Meta:
         model = Profile
-        fields = ('username', 'password1', 'password2')
-
-
-class ProfileDetailSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Profile
-        fields = ('id', 'username', 'picture', 'first_name', 'last_name', 'email', 'phone', 'birth_date')
+        fields = ('username', 'email', 'password1', 'password2')
 
 
 class ProfileSerializer(serializers.HyperlinkedModelSerializer):
-
     class Meta:
         model = Profile
         fields = ('url', 'id', 'username', 'picture', 'full_name')
+
+
+class ProfileDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = (
+            'id',
+            'username',
+            'picture',
+            'first_name',
+            'last_name',
+            'email',
+            'phone',
+            'birth_date'
+        )
+
+
+from post import serializers as post_se
+from page import serializers as page_se
+
+
+class MyProfileDetailSerializer(serializers.ModelSerializer):
+    chased_pages = page_se.PageSerializer(many=True)
+    chased_categories = post_se.CategorySerializer(many=True)
+    chased_subcategories = post_se.SubcategorySerializer(many=True)
+
+    class Meta:
+        model = Profile
+        fields = (
+            'id',
+            'username',
+            'picture',
+            'budget',
+            'first_name',
+            'last_name',
+            'email',
+            'phone',
+            'birth_date',
+            'is_active',
+            'chased_pages',
+            'chased_categories',
+            'chased_subcategories',
+        )
+
+
+class MyProfileUpdateSerializer(serializers.ModelSerializer):
+    chased_pages = serializers.StringRelatedField
+    chased_categories = serializers.StringRelatedField
+    chased_subcategories = serializers.StringRelatedField
+
+    class Meta:
+        model = Profile
+        fields = (
+            'id',
+            'username',
+            'picture',
+            'first_name',
+            'last_name',
+            'email',
+            'phone',
+            'birth_date',
+            'chased_pages',
+            'chased_categories',
+            'chased_subcategories',
+        )

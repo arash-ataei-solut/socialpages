@@ -1,14 +1,15 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 from django.db.models import Avg, F
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.utils import timezone
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.generics import ListAPIView
 from rest_framework.mixins import ListModelMixin, UpdateModelMixin, CreateModelMixin, DestroyModelMixin
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view
 from rest_framework.filters import SearchFilter
-from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
+from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from collections import OrderedDict
@@ -16,10 +17,9 @@ from collections import OrderedDict
 from user.models import Profile
 from .models import Post, Subcategory, Category, MediaFile
 from . import serializers as se
-from .tasks import rate, buy, buy_media
+from .tasks import rate, buy, buy_media, comment
 from .renderers import MyRenderer
 from .permissions import IsSenderOrIsAuthenticatedOrReadOnly
-from user.views import get_user_by_token
 
 
 class CategoryView(GenericViewSet, ListModelMixin, CreateModelMixin):
@@ -39,6 +39,7 @@ class CategoryView(GenericViewSet, ListModelMixin, CreateModelMixin):
         return self.serializers.get(self.action)
 
     def retrieve(self, request, **kwargs):
+        request.last_url = request.path
         category = Category.objects.get(pk=kwargs['pk'])
         category_info = se.CategoryDetailSerializer(category, context={'request': request})
 
@@ -47,7 +48,7 @@ class CategoryView(GenericViewSet, ListModelMixin, CreateModelMixin):
         ).annotate(
             average_rate=Avg('rates__rate')
         ).order_by(
-            F('average_rate').desc(nulls_first=True), '-create_date'
+            F('average_rate').desc(nulls_first=True), '-date_created'
         )
 
         queryset = SearchFilter().filter_queryset(
@@ -90,6 +91,7 @@ class SubcategoryView(GenericViewSet, CreateModelMixin):
         return self.serializers.get(self.action)
 
     def retrieve(self, request, **kwargs):
+        request.last_url = request.path
         subcategory = Subcategory.objects.get(pk=kwargs['pk'])
         subcategory_info = se.CategoryDetailSerializer(subcategory, context={'request': request})
 
@@ -98,7 +100,7 @@ class SubcategoryView(GenericViewSet, CreateModelMixin):
         ).annotate(
             average_rate=Avg('rates__rate')
         ).order_by(
-            F('average_rate').desc(nulls_first=True), '-create_date'
+            F('average_rate').desc(nulls_first=True), '-date_created'
         )
 
         queryset = SearchFilter().filter_queryset(
@@ -131,7 +133,7 @@ class PostView(ListModelMixin, UpdateModelMixin, DestroyModelMixin, GenericViewS
     queryset = qs = Post.objects.all().annotate(
         average_rate=Avg('rates__rate')
     ).order_by(
-        F('average_rate').desc(nulls_first=True), '-create_date'
+        F('average_rate').desc(nulls_first=True), '-date_created'
     )
     filter_backends = (SearchFilter,)
     search_fields = (
@@ -157,6 +159,7 @@ class PostView(ListModelMixin, UpdateModelMixin, DestroyModelMixin, GenericViewS
         return self.serializers.get(self.action)
 
     def retrieve(self, request, **kwargs):
+        request.last_url = request.path
         try:
             instance = Post.objects.filter(pk=kwargs['pk']).annotate(
                 average_rate=Avg('rates__rate')
@@ -167,7 +170,7 @@ class PostView(ListModelMixin, UpdateModelMixin, DestroyModelMixin, GenericViewS
             return Response({'error': 'the post by id = {} does not exist'.format(kwargs['pk'])})
 
         if request.user.is_authenticated:
-            user = Profile.objects.get(username=get_user_by_token(request))
+            user = Profile.objects.get(username=request.user)
             if user not in instance.viewed_by.all():
                 instance.viewed_by.add(user)
             if instance.price != 0 or False in [media.price != 0 for media in instance.medias.all()] or instance.sender == request.user:
@@ -212,6 +215,7 @@ class PostView(ListModelMixin, UpdateModelMixin, DestroyModelMixin, GenericViewS
             buy(request.user, kwargs['pk'])
             return HttpResponseRedirect(reverse('post-detail', kwargs={'pk': kwargs['pk']}))
         else:
+            request.last_url = request.path
             return HttpResponseRedirect(reverse('login'))
 
     @action(methods=['get', 'put'], detail=True)
@@ -230,7 +234,8 @@ class PostView(ListModelMixin, UpdateModelMixin, DestroyModelMixin, GenericViewS
             return Response({'status': 'you can not add media to this post'})
 
 
-def media_buy(request, post_id, media_id):
+@api_view
+def buy_media_view(request, post_id, media_id):
     if request.user.is_authenticated:
         buy_media(request.user, media_id)
         return HttpResponseRedirect(reverse('post-detail', kwargs={'pk': post_id}))
@@ -238,7 +243,8 @@ def media_buy(request, post_id, media_id):
         return HttpResponseRedirect(reverse('login'))
 
 
-def Rate(request, **kwargs):
+@api_view
+def rate_post_view(request, **kwargs):
     if request.method == 'GET' and request.user.is_authenticated:
         return Response({'status': 'rate'})
     if request.method == 'POST' and request.user.is_authenticated:
@@ -248,15 +254,26 @@ def Rate(request, **kwargs):
         return HttpResponseRedirect(reverse('login'))
 
 
-class LastDay(ListAPIView):
+@api_view
+def comment_post_view(request, **kwargs):
+    if request.method == 'GET' and request.user.is_authenticated:
+        return Response({'status': 'rate'})
+    if request.method == 'POST' and request.user.is_authenticated:
+        comment(request.user, kwargs['pk'], request.data['text'])
+        return HttpResponseRedirect(reverse('post-detail', kwargs={'pk': kwargs['pk']}))
+    else:
+        return HttpResponseRedirect(reverse('login'))
+
+
+class LastDayView(ListAPIView):
     name = '24h'
     renderer_classes = [JSONRenderer, MyRenderer]
     queryset = Post.objects.filter(
-        create_date__gt=datetime.now() - timedelta(hours=24)
+        date_created__gt=timezone.now() - timedelta(hours=24)
     ).annotate(
         average_rate=Avg('rates__rate')
     ).order_by(
-        F('average_rate').desc(nulls_first=True), '-create_date'
+        F('average_rate').desc(nulls_first=True), '-date_created'
     )
     serializer_class = se.PostSerializer
     filter_backends = [SearchFilter]

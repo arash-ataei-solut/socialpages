@@ -10,10 +10,12 @@ class ProfileManager(BaseUserManager):
     def create_user(
             self,
             username,
+            email,
             password=None,
     ):
         user = self.model(
             username=username,
+            email=email,
         )
         user.set_password(password)
         user.save(using=self._db)
@@ -22,13 +24,16 @@ class ProfileManager(BaseUserManager):
     def create_superuser(
             self,
             username,
+            email,
             password=None
     ):
         user = self.create_user(
             username=username,
+            email=email,
             password=password,
         )
         user.is_admin = True
+        user.is_active = True
         user.save(using=self._db)
         return user
 
@@ -50,9 +55,9 @@ class Profile(AbstractBaseUser):
     picture = models.ImageField(upload_to='profile', blank=True)
     first_name = models.CharField(_('first name'), max_length=50, blank=True)
     last_name = models.CharField(_('last name'), max_length=50, blank=True)
-    email = models.EmailField(_('email address'), max_length=255, blank=True)
+    email = models.EmailField(_('email address'), max_length=255, unique=True)
     phone = models.CharField(_('phone number'), max_length=20, blank=True, validators=[is_phone])
-    birth_date = models.DateField(_('birth date'), null=True)
+    birth_date = models.DateField(_('birth date'), blank=True)
 
     budget = models.DecimalField(max_digits=10, decimal_places=0, default=100)
 
@@ -63,7 +68,7 @@ class Profile(AbstractBaseUser):
     )
     is_active = models.BooleanField(
         _('active'),
-        default=True,
+        default=False,
         help_text=_(
             'Designates whether this user should be treated as active. '
             'Unselect this instead of deleting accounts.'
@@ -75,7 +80,7 @@ class Profile(AbstractBaseUser):
 
     EMAIL_FIELD = 'email'
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['email']
 
     class Meta:
         verbose_name = _('user')

@@ -11,7 +11,6 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework import status
 
-from user.views import get_user_by_token
 from .models import Page
 from .serializers import PageSerializer, PageCreateSerializer, PageDetailSerializer
 from .tasks import buy
@@ -39,6 +38,7 @@ class PageView(GenericViewSet, ListModelMixin):
         return self.serializers.get(self.action)
 
     def retrieve(self, request, **kwargs):
+        request.last_url = request.path
         page = Page.objects.get(pk=kwargs['pk'])
         page_info = PageDetailSerializer(page, context={'request': request})
 
@@ -86,7 +86,7 @@ class PageView(GenericViewSet, ListModelMixin):
     @action(methods=['get'], detail=True)
     def buy(self, request, **kwargs):
         if 'Authorization' in request.COOKIES:
-            buy.delay(get_user_by_token(request), kwargs['pk'])
+            buy.delay(request.user, kwargs['pk'])
             return HttpResponseRedirect(reverse('page-detail', kwargs={'pk': kwargs['pk']}))
         else:
             return HttpResponseRedirect(reverse('login'))

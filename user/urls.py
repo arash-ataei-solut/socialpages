@@ -1,9 +1,11 @@
 from django.urls import path
 from rest_framework.routers import SimpleRouter
 
-from .views import ProfileViewSet
+from .views import ProfileView, activate
 
 router = SimpleRouter()
-router.register('profiles', ProfileViewSet)
+router.register('profiles', ProfileView)
 
-urlpatterns = [] + router.urls
+urlpatterns = [
+    path('activate/<str:uidb64>/<str:token>/', activate, name='activate')
+] + router.urls

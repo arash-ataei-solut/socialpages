@@ -1,7 +1,8 @@
 from django.urls import path
 from rest_framework.routers import SimpleRouter
 
-from .views import CategoryView, SubcategoryView, PostView, media_buy, LastDay, Rate
+from .views import CategoryView, SubcategoryView, PostView, buy_media, LastDayView, rate_post_view, comment_post_view
+
 
 router = SimpleRouter()
 
@@ -11,7 +12,8 @@ router.register('post', PostView)
 
 
 urlpatterns = [
-    path('media-buy/<int:post_id>/<int:media_id>/', media_buy),
-    path('rate/<int:pk>/', Rate, name='rate'),
-    path('24h/', LastDay.as_view(), name='24h')
+    path('buy-media/<int:post_id>/<int:media_id>/', buy_media),
+    path('rate/<int:pk>/', rate_post_view, name='rate'),
+    path('comment/<int:pk>/', comment_post_view, name='comment'),
+    path('', LastDayView.as_view(), name='24h')
 ] + router.urls

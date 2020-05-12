@@ -33,3 +33,21 @@ class UnicodePhoneValidator(validators.RegexValidator):
         'Enter a valid phone number.'
     )
     flags = 0
+
+
+@deconstructible
+class HasDigitPasswordValidator(validators.RegexValidator):
+    regex = r'(?=.*[0-9])'
+    message = _(
+        'Ensure string has minimum one digits.'
+    )
+    flags = 0
+
+
+@deconstructible
+class UppercasePasswordValidator(validators.RegexValidator):
+    regex = r'(?=.*[A-Z])'
+    message = _(
+        'Ensure string has minimum one uppercase letters.'
+    )
+    flags = 0

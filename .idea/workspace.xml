@@ -2,48 +2,25 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cb0fdcf8-c36d-491f-90e1-bc5d570dc237" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/post/pagination.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/post/templates/base.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/post/templates/number.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user/templates/login.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user/renderers.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user/templates/email_template.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/post/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post/permissions.py" beforeDir="false" afterPath="$PROJECT_DIR$/post/permissions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post/renderers.py" beforeDir="false" afterPath="$PROJECT_DIR$/post/renderers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/page/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/page/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/post/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/post/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/post/serializers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/post/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post/tasks.py" beforeDir="false" afterPath="$PROJECT_DIR$/post/tasks.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/post/templates/base.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/post/templates/post.html" beforeDir="false" afterPath="$PROJECT_DIR$/post/templates/post.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/post/templatetags/mytemplatetags.py" beforeDir="false" afterPath="$PROJECT_DIR$/post/templatetags/mytemplatetags.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/post/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/post/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/post/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/post/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/socialpages/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/socialpages/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/socialpages/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/socialpages/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/1.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/all.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/bootstrap.min.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/bootstrap.min.css.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/jquery.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/css/bootstrap-grid.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/css/bootstrap-grid.css.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/css/bootstrap-grid.min.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/css/bootstrap-grid.min.css.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/css/bootstrap-reboot.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/css/bootstrap-reboot.css.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/css/bootstrap-reboot.min.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/css/bootstrap-reboot.min.css.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/css/bootstrap.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/css/bootstrap.css.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/css/bootstrap.min.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/css/bootstrap.min.css.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/js/bootstrap.bundle.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/js/bootstrap.bundle.js.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/js/bootstrap.bundle.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/js/bootstrap.bundle.min.js.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/js/bootstrap.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/js/bootstrap.js.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/js/bootstrap.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/rest_framework/js/bootstrap.min.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/user/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/user/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/user/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/user/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/user/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/user/templates/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/user/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user/validators.py" beforeDir="false" afterPath="$PROJECT_DIR$/user/validators.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/user/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/user/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -72,16 +49,17 @@
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/user/templates" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/static/css" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/static/js" />
       <recent name="$PROJECT_DIR$/static" />
       <recent name="$PROJECT_DIR$/post" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/user/templates" />
+      <recent name="$PROJECT_DIR$/static/css" />
     </key>
   </component>
   <component name="SvnConfiguration">
@@ -106,13 +84,21 @@
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="418" y="198" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1080@0.0.1920.1080" timestamp="1588176148031" />
-    <state x="743" y="298" width="424" height="493" key="FileChooserDialogImpl" timestamp="1587832281112">
+    <state x="743" y="298" width="424" height="493" key="FileChooserDialogImpl" timestamp="1588870931684">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state x="743" y="298" width="424" height="493" key="FileChooserDialogImpl/0.0.1920.1080@0.0.1920.1080" timestamp="1587832281112" />
+    <state x="743" y="298" width="424" height="493" key="FileChooserDialogImpl/0.0.1920.1080@0.0.1920.1080" timestamp="1588870931684" />
     <state x="607" y="367" key="com.intellij.ide.util.TipDialog" timestamp="1586336764782">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="607" y="367" key="com.intellij.ide.util.TipDialog/0.0.1920.1080@0.0.1920.1080" timestamp="1586336764782" />
+    <state x="723" y="454" width="464" height="181" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1588795299381">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="723" y="454" width="464" height="181" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1080@0.0.1920.1080" timestamp="1588795299381" />
+    <state x="623" y="239" width="672" height="678" key="search.everywhere.popup" timestamp="1588772806348">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="623" y="239" width="672" height="678" key="search.everywhere.popup/0.0.1920.1080@0.0.1920.1080" timestamp="1588772806348" />
   </component>
 </project>

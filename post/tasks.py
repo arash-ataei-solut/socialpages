@@ -3,7 +3,7 @@ from __future__ import absolute_import, unicode_literals
 from celery import shared_task
 from django.db import transaction
 
-from .models import Post, Rate, MediaFile
+from .models import Post, Rate, MediaFile, Comment
 from user.models import Profile
 
 
@@ -15,6 +15,16 @@ def rate(username, pk, rate_num):
         rate_obj, _ = Rate.objects.get_or_create(user=user, post=post)
         rate_obj.rate = rate_num
         rate_obj.save()
+
+
+@shared_task
+def comment(username, pk, text):
+    user = Profile.objects.get(username=username)
+    if user:
+        post = Post.objects.get(pk=pk)
+        comment_obj = Comment.objects.create(user=user, post=post)
+        comment_obj.text = text
+        comment_obj.save()
 
 
 @shared_task
